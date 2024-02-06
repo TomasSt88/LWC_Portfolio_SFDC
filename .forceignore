@@ -3,6 +3,9 @@
 #
 
 package.xml
+**/appMenus
+**/reports
+**/dashboards
 
 # LWC configuration files
 **/jsconfig.json
