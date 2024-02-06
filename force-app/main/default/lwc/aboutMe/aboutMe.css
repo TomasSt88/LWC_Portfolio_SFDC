@@ -1,0 +1,41 @@
+.outer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1{
+    text-align: center;
+    font-size: 48px;
+}
+
+p {
+    font-size: 18px;
+}
+
+img {
+    border: 2px solid black;
+    border-radius: 7px;
+}
+
+
+
+.text-container {
+    margin: 10px;
+}
+
+@media only screen and (min-width: 600px) {
+    .container {
+        display: flex;
+        gap: 10px;
+    }
+
+    .text-container {
+        min-width: 40ch;
+        max-width: 70ch;
+        margin: 0 15px;
+    }
+
+    .img-container {
+        min-width: 25%;
+    }
+}
