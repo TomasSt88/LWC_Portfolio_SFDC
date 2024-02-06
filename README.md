@@ -1,3 +1,8 @@
+Pre deployment step: Allow digital experience sites and create new empty LWR site (fill name, and URL with portolio) 
+
+Post deployment step: Repository consist from LWC, Classes and static resouces for LWC components. There is needed to Add ContactMe Apex controller for external admin profile (profile used in Digital experience community page)
+
+
 # Salesforce DX Project: Next Steps
 
 Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
