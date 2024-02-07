@@ -23,6 +23,15 @@
     box-shadow: 0 8px 16px 6px rgba(0,0,0,0.3);
   }
   
+  img {
+    max-height: 50px;
+    max-width: 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+
   .text-container {
     padding: 8px;
     margin: 0 8px;
@@ -45,6 +54,5 @@
   
     .card {
       width: 10%;
-      max-height: 50px;
     }
   }
