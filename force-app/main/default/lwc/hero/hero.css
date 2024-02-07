@@ -33,6 +33,7 @@ h1 {
 }
 
 p {
+    margin-left: 20px;
     font-size: 24px;
     max-width: fit-content;
     text-align: center;
@@ -60,5 +61,6 @@ c-contact-me-button {
     .container {
         display: block;
         width: 50%;
+        margin-left: 60px;
     }
 }
