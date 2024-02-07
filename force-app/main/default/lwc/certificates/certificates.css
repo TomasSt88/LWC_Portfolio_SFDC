@@ -1,58 +1,74 @@
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--dxp-g-neutral);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.header {
+  text-align: center !important;
+  font-size: 24px;
+  margin-bottom: 20px;
+  background-color: var(--dxp-g-neutral);
+}
+
 .outer-containe {
-    /* display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    min-height:150px;
-    min-width:100px; */
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: var(--dxp-g-neutral);
-    border-radius: 5px;
-    padding: 20px;
-  }
-  
-  .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 5px; /* 5px rounded corners */
-    margin: 10px;
-    max-height: 200px;
-  }
-  
-  .card:hover {
-    box-shadow: 0 8px 16px 6px rgba(0,0,0,0.3);
-  }
-  
-  img {
-    max-height: 50px;
-    max-width: 50px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
 
-  .text-container {
-    padding: 8px;
-    margin: 0 8px;
-  }
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  padding: 6px;
+  transition: 0.3s;
+  border-radius: 5px;
+  margin: 10px;
+  min-height: 130px; 
+}
 
-  .text-container p {
-    font-size: 10px;
-  }
+.card:hover {
+  box-shadow: 0 8px 16px 6px rgba(0,0,0,0.3);
+}
 
-  h1 {
-    text-align: center;
-    font-size: 18px;
-  }
-  
-  /* Responsive layout - makes the cards stack on top of each other */
-  @media (min-width: 768px) {
-    .card-container  {
+.card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  max-height: 50px;
+  max-width: 50px;
+  display: block;
+  margin: auto;
+  width: 50%;
+}
+
+.text-container {
+  padding: 8px;
+  margin: 0 8px;
+}
+
+h4 {
+  font-size: 16px;
+  text-align: center;
+}
+
+p {
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsive layout - makes the cards stack on top of each other */
+@media (min-width: 768px) {
+  .outer-containe  {
       display: flex;
-    }
-  
-    .card {
-      width: 10%;
-    }
   }
+
+  .card {
+      width: 20%;
+  }
+}
