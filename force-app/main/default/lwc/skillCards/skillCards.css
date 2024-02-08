@@ -11,40 +11,54 @@
     transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
     margin: 10px;
+    padding-top: 10px;
 }
   
-  /* Add rounded corners to the top left and the top right corner of the image */
-  img {
-    border-radius: 5px 5px 0 0;
-  }
+img {
+  display: block;
+  margin: auto;
+  width: 50%;
+}
 
-  .text-container {
-    padding: 8px;
-    margin: 0 8px;
-  }
+.text-container {
+  padding: 8px;
+  margin: 0 8px;
+}
 
-  .text-container h4 {
-    text-align: center;
-    font-size: 28px;
+.text-container h4 {
+  text-align: center;
+  font-size: 18px;
+}
 
-  }
+.list {
+  font-size: 16px;
+  text-align: center;
+}
 
-  .text-container p {
-    font-size: 18px;
-  }
+ul.list li {
+  margin: 0.1em;
+  background: #595959;
+  border-radius: 9px;
+  color: #fff;
+  justify-content: space-between;
+  font-size: 0.7em;
+  padding: 4px 11px;
+  text-shadow: 0 0 3px #111C26;
 
-  h1 {
-    text-align: center;
-    font-size: 36px;
-  }
+}
 
-  @media only screen and (min-width: 768px) {
+h1 {
+  font-size: 36px;
+  text-align: center;
+}
 
+/* Responsive layout - makes the cards stack on top of each other */
+@media only screen and (min-width: 768px) {
     .card-container {
         display: flex;
     }
 
     .card {
-        width: 33%;
+        width: 16%;
     }
-  }
+}

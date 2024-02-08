@@ -21,13 +21,12 @@
 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  padding: 6px;
   transition: 0.3s;
   border-radius: 5px;
   margin: 10px;
+  padding: 6px;
   min-height: 130px; 
   width: 60%;
-  margin: 10px;
 }
 
 .card-container {
@@ -63,6 +62,6 @@ p {
   }
 
   .card {
-    width: 20%; /* Cards take 20% width on larger screens */
+    width: 20%;
   }
 }
