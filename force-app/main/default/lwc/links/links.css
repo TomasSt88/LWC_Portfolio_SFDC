@@ -4,9 +4,6 @@
     background-color: var(--dxp-g-neutral);
     border-radius: 5px;
     padding: 20px;
-}
-
-.container{
     display: flex;
     flex-direction:column;
     justify-content: center; 
