@@ -50,5 +50,6 @@ img {
 
     .img-container {
         min-width: 25%;
+        margin: 10px;
     }
 }
