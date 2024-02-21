@@ -1,0 +1,24 @@
+<template>
+    <div class="outer-container">
+        <a name="home"></a>
+        <template if:true={portfolio}>
+            <h2>{portfolio.Invitation__c}</h2>
+            <div class="container">
+                <div class="img-container">
+                    <img src={aboutMeImageURL} >
+                </div> 
+                <div class="text-container">
+                    <h2>{portfolio.Introduction__c}</h2>
+                    <p>{portfolio.Introduction_paragraph__c}</p>
+                    <br>
+                    <a name="about"></a>
+                    <h2>{portfolio.About_Me_Heading__c}</h2>
+                    <p>{portfolio.About_Me_paragraph__c}</p>
+                    <br>
+                    <h2>{portfolio.Experiences_Heading__c}</h2>
+                    <p>{portfolio.Experiences_Paragraph__c}</p>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

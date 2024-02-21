@@ -1,0 +1,22 @@
+<template>
+    <lightning-card title="Filters" icon-name="standard:calibration">
+        <lightning-button
+            slot="actions"
+            label="Reset"
+            onclick={handleReset}
+        ></lightning-button>
+
+        <div class="slds-var-m-around_medium">
+            <lightning-record-edit-form object-api-name="Portfolio__c" >
+                <lightning-input-field 
+                    field-name="Portfolio_Search__c" onchange={handlePortfolioIdChange}
+                ></lightning-input-field>
+            </lightning-record-edit-form>
+        </div>
+    </lightning-card>
+</template>
+
+                <!-- label="Search Key"
+                type="text"
+                value={searchKey}
+                onchange={handleSearchKeyChange} -->
