@@ -1,24 +1,41 @@
 <template>
     <div class="outer-container">
-        <a name="home"></a>
-        <template if:true={portfolioData.portfolio}>
-            <h2>{portfolioData.portfolio.Invitation__c}</h2>
-            <div class="container">
-                <div class="img-container">
-                    <img src={aboutMeImageData.aboutMeImageURL} alt="About Me Image">
-                </div> 
-                <div class="text-container">
-                    <h2>{portfolioData.portfolio.Introduction__c}</h2>
-                    <p>{portfolioData.portfolio.Introduction_paragraph__c}</p>
-                    <br>
-                    <a name="about"></a>
-                    <h2>{portfolioData.portfolio.About_Me_Heading__c}</h2>
-                    <p>{portfolioData.portfolio.About_Me_paragraph__c}</p>
-                    <br>
-                    <h2>{portfolioData.portfolio.Experiences_Heading__c}</h2>
-                    <p>{portfolioData.portfolio.Experiences_Paragraph__c}</p>
+        <template if:true={isLoading}>
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
                 </div>
+            </div>
+        </template>
+        <template if:false={isLoading}>
+            <div class="outer-container">
+                <a name="home"></a>
+                <template if:true={portfolioData.portfolio}>
+                    <h2>{portfolioData.portfolio.Invitation__c}</h2>
+                    <div class="container">
+                        <div class="img-container">
+                            <img src={aboutMeImageData.aboutMeImageURL} alt="About Me Image">
+                        </div> 
+                        <div class="text-container">
+                            <h2>{portfolioData.portfolio.Introduction__c}</h2>
+                            <p>{portfolioData.portfolio.Introduction_paragraph__c}</p>
+                            <br>
+                            <a name="about"></a>
+                            <h2>{portfolioData.portfolio.About_Me_Heading__c}</h2>
+                            <p>{portfolioData.portfolio.About_Me_paragraph__c}</p>
+                            <br>
+                            <h2>{portfolioData.portfolio.Experiences_Heading__c}</h2>
+                            <p>{portfolioData.portfolio.Experiences_Paragraph__c}</p>
+                        </div>
+                    </div>
+                </template>
             </div>
         </template>
     </div>
 </template>
+
+
+
+

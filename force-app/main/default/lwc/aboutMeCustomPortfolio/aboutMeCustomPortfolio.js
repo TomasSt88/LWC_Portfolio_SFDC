@@ -6,6 +6,8 @@ import getContentDocumentId from '@salesforce/apex/aboutMeCustomPortfolioControl
 
 export default class AboutMeCustomPortfolio extends LightningElement {
     @track portfolioData = { portfolio: null };
+    @track aboutMeImageData = { aboutMeImageURL: null };
+    @track isLoading = false; // Add a loading state
     subscription = null;
     
     @wire(MessageContext)
@@ -25,31 +27,24 @@ export default class AboutMeCustomPortfolio extends LightningElement {
             }
         }
         
-        handleMessage(message) {
-            if (message.portfolioId) {
-                let portfolioIdStr = message.portfolioId.toString(); // Using toString() method
-                // let portfolioIdStr = String(message.portfolioId); // Using String() function
-                                
-                getPortfolio({ portfolioId: portfolioIdStr })
-                .then(result => {
-                    this.portfolioData.portfolio = result[0]; // Set portfolio to the first item in the result list
-                    console.log("Portfolio ", this.portfolioData.portfolio); // Log the portfolio object
-                })
-                .catch(error => {
-                    console.error('Error fetching portfolios:', error);
-                    this.error = 'An error occurred while fetching portfolios. Please try again.';
-                });
-            
+    handleMessage(message) {
+        if (message.portfolioId) {
+            let portfolioIdStr = message.portfolioId.toString();
+
+            Promise.all([
+                getPortfolio({ portfolioId: portfolioIdStr }),
                 getContentDocumentId({ portfolioId: portfolioIdStr })
-                .then(result => {
-                    this.contentDocumentId = result; // Set contentDocumentId to the result
-                    this.aboutMeImageURL = '/sfc/servlet.shepherd/version/download/' + this.contentDocumentId;
-                    console.log("Content Document ID ", this.contentDocumentId); // Log the Content Document ID
-                })
-                .catch(error => {
-                    console.error('Error fetching Content Document ID:', error);
-                    this.error = 'An error occurred while fetching Content Document ID. Please try again.';
-                });
-            }
+            ])
+            .then(([portfolioResult, contentDocumentIdResult]) => {
+                this.portfolioData.portfolio = portfolioResult[0];
+                this.aboutMeImageData.aboutMeImageURL = '/sfc/servlet.shepherd/version/download/' + contentDocumentIdResult;
+                this.isLoading = false; // Set loading state to false once data has been loaded
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.error = 'An error occurred. Please check the portfolio ID and try again.';
+                this.isLoading = false; // Set loading state to false even if an error occurs
+            });
         }
+    }
 }
