@@ -6,7 +6,6 @@ import getContentDocumentId from '@salesforce/apex/aboutMeCustomPortfolioControl
 
 export default class AboutMeCustomPortfolio extends LightningElement {
     @track portfolioData = { portfolio: null };
-    @track aboutMeImageData = { aboutMeImageURL: null };
     subscription = null;
     
     @wire(MessageContext)
@@ -43,12 +42,13 @@ export default class AboutMeCustomPortfolio extends LightningElement {
             
                 getContentDocumentId({ portfolioId: portfolioIdStr })
                 .then(result => {
-                    this.aboutMeImageData.aboutMeImageURL = '/sfc/servlet.shepherd/version/download/' + result;
-                    console.log("About Me Image URL ", this.aboutMeImageData.aboutMeImageURL);
+                    this.contentDocumentId = result; // Set contentDocumentId to the result
+                    this.aboutMeImageURL = '/sfc/servlet.shepherd/version/download/' + this.contentDocumentId;
+                    console.log("Content Document ID ", this.contentDocumentId); // Log the Content Document ID
                 })
                 .catch(error => {
-                    console.error('Error fetching About Me Image URL:', error);
-                    this.error = 'An error occurred while fetching About Me Image URL. Please try again.';
+                    console.error('Error fetching Content Document ID:', error);
+                    this.error = 'An error occurred while fetching Content Document ID. Please try again.';
                 });
             }
         }

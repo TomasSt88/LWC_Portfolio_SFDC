@@ -11,6 +11,7 @@ public with sharing class aboutMeCustomPortfolioController {
     @AuraEnabled(cacheable=true scope='global')
     public static String getContentDocumentId(String portfolioId) {
         ContentDocumentLink docLink = [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :portfolioId LIMIT 1];
-        return docLink.ContentDocumentId;
+        ContentVersion version = [SELECT Id FROM ContentVersion WHERE ContentDocumentId = :docLink.ContentDocumentId ORDER BY CreatedDate DESC LIMIT 1];
+        return version.Id;
     }
 }
