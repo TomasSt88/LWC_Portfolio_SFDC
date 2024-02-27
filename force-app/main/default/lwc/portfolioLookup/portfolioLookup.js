@@ -31,7 +31,7 @@ export default class portfolioLookup extends LightningElement {
     handlePortfolioIdChange(event) {
         this.portfolioId = event.detail.value;
         this.fireChangeEvent();
-        console.log("portfolio handlePortfolioIdChange" + this.portfolioId);
+        console.log("portfolio handlePortfolioIdChange " + this.portfolioId);
     }
 
     fireChangeEvent() {
@@ -43,7 +43,7 @@ export default class portfolioLookup extends LightningElement {
             };
             publish(this.messageContext, FILTERSCHANGEMC, filters);
         }, DELAY);
-        console.log("portfolio Fire Change event" + this.portfolioId);
+        console.log("portfolio Fire Change event " + this.portfolioId);
     }
 }
 

@@ -7,7 +7,7 @@ import getContentDocumentId from '@salesforce/apex/aboutMeCustomPortfolioControl
 export default class AboutMeCustomPortfolio extends LightningElement {
     @track portfolioData = { portfolio: null };
     @track aboutMeImageData = { aboutMeImageURL: null };
-    @track isLoading = false; // Add a loading state
+    @track isLoading = false;
     subscription = null;
     
     @wire(MessageContext)
@@ -26,10 +26,9 @@ export default class AboutMeCustomPortfolio extends LightningElement {
                 );
             }
         }
-        
+    
     handleMessage(message) {
         if (message.type === 'reset') {
-            // Clear the data
             this.portfolioData = { portfolio: null };
             this.aboutMeImageData = { aboutMeImageURL: null };
         } else if (message.portfolioId) {
@@ -42,12 +41,12 @@ export default class AboutMeCustomPortfolio extends LightningElement {
             .then(([portfolioResult, contentDocumentIdResult]) => {
                 this.portfolioData.portfolio = portfolioResult[0];
                 this.aboutMeImageData.aboutMeImageURL = '/sfc/servlet.shepherd/version/download/' + contentDocumentIdResult;
-                this.isLoading = false; // Set loading state to false once data has been loaded
+                this.isLoading = false; 
             })
             .catch(error => {
                 console.error('Error:', error);
                 this.error = 'An error occurred. Please check the portfolio ID and try again.';
-                this.isLoading = false; // Set loading state to false even if an error occurs
+                this.isLoading = false;
             });
         }
     }
