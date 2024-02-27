@@ -19,8 +19,13 @@ export default class portfolioLookup extends LightningElement {
                 field.reset();
             });
         }
-        this.fireChangeEvent();
-        console.log("portfolio handleReset" + this.portfolioId);
+        // Publish a reset message
+        const resetMessage = {
+            portfolioId: null,
+            // property type is setting usage for reset messages
+            type: 'reset'
+        };
+        publish(this.messageContext, FILTERSCHANGEMC, resetMessage);
     }
 
     handlePortfolioIdChange(event) {

@@ -28,9 +28,13 @@ export default class AboutMeCustomPortfolio extends LightningElement {
         }
         
     handleMessage(message) {
-        if (message.portfolioId) {
+        if (message.type === 'reset') {
+            // Clear the data
+            this.portfolioData = { portfolio: null };
+            this.aboutMeImageData = { aboutMeImageURL: null };
+        } else if (message.portfolioId) {
             let portfolioIdStr = message.portfolioId.toString();
-
+    
             Promise.all([
                 getPortfolio({ portfolioId: portfolioIdStr }),
                 getContentDocumentId({ portfolioId: portfolioIdStr })
