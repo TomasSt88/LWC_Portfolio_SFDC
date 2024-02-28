@@ -2,7 +2,7 @@ import { LightningElement, wire, track } from 'lwc';
 import { subscribe, MessageContext } from 'lightning/messageService';
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
 import getPortfolio from '@salesforce/apex/aboutMeCustomPortfolioController.getPortfolios';
-import getContentDocumentId from '@salesforce/apex/aboutMeCustomPortfolioController.getContentDocumentId';
+import getContentDocumentIdPortfolio from '@salesforce/apex/aboutMeCustomPortfolioController.getContentDocumentIdPortfolio';
 
 export default class AboutMeCustomPortfolio extends LightningElement {
     @track portfolioData = { portfolio: null };
@@ -36,7 +36,7 @@ export default class AboutMeCustomPortfolio extends LightningElement {
     
             Promise.all([
                 getPortfolio({ portfolioId: portfolioIdStr }),
-                getContentDocumentId({ portfolioId: portfolioIdStr })
+                getContentDocumentIdPortfolio({ portfolioId: portfolioIdStr })
             ])
             .then(([portfolioResult, contentDocumentIdResult]) => {
                 this.portfolioData.portfolio = portfolioResult[0];
