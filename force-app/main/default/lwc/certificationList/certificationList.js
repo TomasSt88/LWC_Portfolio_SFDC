@@ -2,11 +2,11 @@ import { LightningElement, api, wire } from 'lwc';
 import { subscribe, MessageContext } from 'lightning/messageService';
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
 import getCertificates from '@salesforce/apex/aboutMeCustomPortfolioController.getCertificates';
-import getContentDocumentIdCertificates from '@salesforce/apex/aboutMeCustomPortfolioController.getContentDocumentIdCertificates';
 
 export default class CertificationList extends LightningElement {
     @api recordId;
     certificatesData = { portfolio: null };
+    certifications = [];
     subscription = null;
 
     @wire(MessageContext)
@@ -28,6 +28,7 @@ export default class CertificationList extends LightningElement {
 
     handleMessage(message) {
         console.log('Received message:', message);
+        
         if (message.type === 'reset') {
             this.certificatesData = { portfolio: null };
         } else if (message.portfolioId) {
@@ -36,21 +37,15 @@ export default class CertificationList extends LightningElement {
             
             Promise.all([
                 getCertificates({ portfolioId: portfolioIdStr }),
-                getContentDocumentIdCertificates({ portfolioId: portfolioIdStr })
             ])
-
             .then(certificatesResult => {
-                console.log('Fetched cettificates:', certificatesResult);
                 this.certificatesData.portfolio = certificatesResult[0];
+                this.certifications = certificatesResult[0]; // Update certifications
+                console.log('Fetched certificates:', certificatesResult);
             })
             .catch(error => {
                 console.error('Error fetching portfolio:', error); 
             });
         }
     }
-
-    // get certifications() {
-    //     console.log('Certificates Data:', this.certificatesData.portfolio);
-    //     return this.certificatesData.portfolio ? this.certificatesData.portfolio.Certifications__r : [];
-    // }
 }

@@ -1,19 +1,27 @@
 import { LightningElement, api } from 'lwc';
 
 export default class CertificationTile extends LightningElement {
-    @api certification;
+    @api
+    get certification() {
+        return this._certification;
+    }
+    set certification(value) {
+        this._certification = value;
+        this.processCertification();
+    }
     
-    connectedCallback() {
-        console.log('Certification Tiles Data:', this.certification);
+    processCertification() {
+        console.log('Certification Tiles Data:', this._certification);
+        // additional processing here
     }
 
-    // @api
-    // set certification(value) {
-    //     this._certification = value;
-    //     console.log('Certification Tiles Data:', this._certification);
-    // }
-    
-    // get certification() {
-    //     return this._certification;
-    // }
+    // In CertificationTile component
+    connectedCallback() {
+        console.log('CertificationTile connected');
+    }
+
+    renderedCallback() {
+        console.log('CertificationTile rendered');
+    }
+
 }
