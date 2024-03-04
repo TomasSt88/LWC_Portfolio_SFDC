@@ -1,21 +1,21 @@
 import { LightningElement, api } from 'lwc';
+import getContentVersionIds from '@salesforce/apex/aboutMeCustomPortfolioController.getContentVersionIds';
 
 export default class CertificationTile extends LightningElement {
-    @api
-    get certification() {
-        return this._certification;
-    }
-    set certification(value) {
-        this._certification = value;
-        this.processCertification();
-    }
-    processCertification() {
-        console.log('Certification Tiles Data:', this._certification);
-    }
+    @api certification;
+    imageUrl;
+
     connectedCallback() {
-        console.log('CertificationTile connected');
+        this.fetchImageUrl();
     }
-    renderedCallback() {
-        console.log('CertificationTile rendered');
+
+    fetchImageUrl() {
+        getContentVersionIds({ portfolioId: this.certification.Id })
+        .then(contentDocumentIdResult => {
+            this.imageUrl = '/sfc/servlet.shepherd/version/download/' + contentDocumentIdResult;
+        })
+        .catch(error => {
+            console.error('Error fetching ContentDocumentId:', error);
+        });
     }
 }
