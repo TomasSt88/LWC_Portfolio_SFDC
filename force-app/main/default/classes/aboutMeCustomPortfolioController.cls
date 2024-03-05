@@ -16,29 +16,26 @@ public with sharing class aboutMeCustomPortfolioController {
     }
 
     @AuraEnabled(cacheable=true scope='global')
-    public static List<Certificate__c> getCertificates(String portfolioId) {
+    public static List<Map<String, Object>> getCertificatesAndContentVersionIds(String portfolioId) {
+        List<Map<String, Object>> certificatesList = new List<Map<String, Object>>();
         List<Certificate__c> certificates = [SELECT Id, Name, Certificates_reached__c,
                                              (SELECT ContentDocumentId FROM ContentDocumentLinks)
                                              FROM Certificate__c
                                              WHERE Portfolio__c = :portfolioId];
-        System.debug('Certificates: ' + certificates);
-        return certificates;
-    }
-    
-    @AuraEnabled(cacheable=true scope='global')
-    public static List<String> getContentVersionIds(String portfolioId) {
-        List<String> contentVersionIds = new List<String>();
-        List<Certificate__c> certificates = [SELECT Id FROM Certificate__c WHERE Portfolio__c = :portfolioId];
         for (Certificate__c certificate : certificates) {
+            Map<String, Object> certificateMap = new Map<String, Object>();
+            certificateMap.put('Id', certificate.Id);
+            certificateMap.put('Name', certificate.Name);
+            certificateMap.put('Certificates_reached__c', certificate.Certificates_reached__c);
             List<ContentDocumentLink> docLinks = [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :certificate.Id];
             for (ContentDocumentLink docLink : docLinks) {
                 List<ContentVersion> versions = [SELECT Id FROM ContentVersion WHERE ContentDocumentId = :docLink.ContentDocumentId ORDER BY CreatedDate DESC LIMIT 1];
                 for (ContentVersion version : versions) {
-                    contentVersionIds.add(version.Id);
+                    certificateMap.put('ContentVersion Id', version.Id);
                 }
             }
+            certificatesList.add(certificateMap);
         }
-        System.debug('Certificates content Versions: ' + contentVersionIds);
-        return contentVersionIds;
+        return certificatesList;
     }
 }

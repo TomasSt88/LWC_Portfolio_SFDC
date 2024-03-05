@@ -1,0 +1,52 @@
+.lightning-card {
+  background-color: var(--dxp-g-neutral);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  margin: 20px; /* Increase margin to create outer borders */
+  padding: 20px;
+  min-height: 200px;
+  width: 80%; /* Set a fixed width */
+  max-width: 1000px; /* Set a maximum width */
+  min-width: 300px; /* Set a minimum width */
+}
+
+img {
+  max-height: 100px;
+  max-width: 100px;
+  display: flex;
+  width: 90%;
+  margin: 6px;
+  justify-content: space-around;
+}
+
+.image-container, .text-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+}
+
+.text-container {
+  margin: 6px;
+}
+
+.text-container h4 {
+  margin: 0px 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.text-container p  {
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsive layout - makes the cards stack on top of each other */
+@media (min-width: 768px) {
+  .lightning-card  {
+    display: flex;
+    flex-direction: row;
+  }
+}

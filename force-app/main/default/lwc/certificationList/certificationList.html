@@ -1,7 +1,7 @@
 <template>
     <lightning-layout multiple-rows="true">
         <template for:each={certifications} for:item="cert">
-            <lightning-layout-item key={cert.Id} size="12" small-device-size="6" medium-device-size="4" large-device-size="3">
+            <lightning-layout-item key={cert.Id} size="6" small-device-size="6" medium-device-size="5" large-device-size="4">
                 <template if:true={cert}>
                     <c-certification-tile certification={cert}></c-certification-tile>
                 </template>
