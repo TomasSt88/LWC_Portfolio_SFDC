@@ -1,0 +1,70 @@
+  /*.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--dxp-g-neutral);
+    border-radius: 5px;
+    padding: 20px;
+  }
+  
+ .header {
+    text-align: center !important;
+    font-size: 36px;
+    background-color: var(--dxp-g-neutral);
+  }
+  
+  .outer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 90px;
+  } 
+  
+  .lightning-layout-item {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    margin: 10%;
+    padding: 6%;
+    min-height: 130px; 
+    width: 60%;
+  }
+  
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  img {
+    max-height: 50px;
+    max-width: 50px;
+    display: block;
+    margin: auto;
+    width: 50%;
+  }
+  
+  .lightning-layout-item .slds-text-heading_small {
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .lightning-layout-item .slds-text-title {
+    font-size: 12px;
+    text-align: center;
+  } */
+  
+  /* Responsive layout - makes the cards stack on top of each other */
+  @media (min-width: 768px) {
+    .outer-container  {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+  
+    .lightning-layout-item {
+      width: 20%;
+    }
+  }
+  
