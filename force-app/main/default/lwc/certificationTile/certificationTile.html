@@ -1,13 +1,21 @@
 <template>
     <lightning-card>
-            <lightning-layout>
+        <div class="card">
+            <lightning-layout vertical-align="center">
                 <div class="image-container">
-                    <img src={imageUrl} alt="Certificate Image"/>
+                    <lightning-layout-item flexibility="auto" padding="around-small">
+                        <img src={imageUrl} alt="Certificate Image"/>
+                    </lightning-layout-item>
                 </div>
                 <div class="text-container">
-                    <h4><b>{certification.Name}</b></h4>
-                    <p>{certification.Certificates_reached__c}</p>
+                    <lightning-layout-item flexibility="auto" padding="around-small">
+                        <div class="slds-text-heading_small">{certification.Name}</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto" padding="around-small">
+                        <div class="slds-text-title">{certification.Certificates_reached__c}</div>
+                    </lightning-layout-item>
                 </div>
             </lightning-layout>
+        </div>
     </lightning-card>
 </template>
