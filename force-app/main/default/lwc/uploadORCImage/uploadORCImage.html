@@ -7,7 +7,7 @@
             </div>
             <img src={imageUrl} alt="Analyzed Image" if:true={imageUrl}/>
             <lightning-button label="Analyze Image" onclick={analyzeImage} class="slds-m-top_medium"></lightning-button>
-            <lightning-textarea label="Extracted Text" value={extractedText} readonly></lightning-textarea>
+            <lightning-textarea label="Extracted Text" value={extractedText} readonly rows="10"></lightning-textarea>
         </div>
     </lightning-card>
 </template>
