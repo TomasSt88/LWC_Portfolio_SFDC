@@ -1,13 +1,22 @@
-<!-- myComponent.html -->
 <template>
     <lightning-card title="Google Cloud Vision API Integration" icon-name="custom:custom14">
         <div class="slds-m-around_medium">
-            <div id="drop_zone" ondragover={allowDrop} ondrop={handleDrop} class="slds-m-bottom_medium">
+            <!-- <div id="drop_zone" ondragover={allowDrop} ondrop={handleDrop} class="slds-m-bottom_medium">
                 Drop image here
-            </div>
-            <img src={imageUrl} alt="Analyzed Image" if:true={imageUrl}/>
+            </div> -->
+            <lightning-file-upload label="Upload Image"
+                                   name="fileUploader"
+                                   accept=".jpg,.jpeg,.png"
+                                   record-id={recordId}
+                                   onuploadfinished={handleUploadFinished}>
+            </lightning-file-upload>
+            <img src={imageUrl} alt="Uploaded Image" if:true={imageUrl}/>
+            <lightning-combobox label="Account" value={accountId} options={accountOptions} onchange={handleAccountChange}></lightning-combobox>
             <lightning-button label="Analyze Image" onclick={analyzeImage} class="slds-m-top_medium"></lightning-button>
             <lightning-textarea label="Extracted Text" value={extractedText} readonly rows="10"></lightning-textarea>
+            <lightning-button label="Save" onclick={saveDocument} class="slds-m-top_medium"></lightning-button>
+            <lightning-button label="Clear" onclick={clear} class="slds-m-top_medium"></lightning-button>
         </div>
     </lightning-card>
+    <lightning-toast if:true={isSaved} title="Success!" message="Extracted Text has been saved successfully." variant="success"></lightning-toast>
 </template>
