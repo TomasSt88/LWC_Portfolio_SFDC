@@ -1,0 +1,13 @@
+<!-- myComponent.html -->
+<template>
+    <lightning-card title="Google Cloud Vision API Integration" icon-name="custom:custom14">
+        <div class="slds-m-around_medium">
+            <div id="drop_zone" ondragover={allowDrop} ondrop={handleDrop} class="slds-m-bottom_medium">
+                Drop image here
+            </div>
+            <img src={imageUrl} alt="Analyzed Image" if:true={imageUrl}/>
+            <lightning-button label="Analyze Image" onclick={analyzeImage} class="slds-m-top_medium"></lightning-button>
+            <lightning-textarea label="Extracted Text" value={extractedText} readonly></lightning-textarea>
+        </div>
+    </lightning-card>
+</template>
