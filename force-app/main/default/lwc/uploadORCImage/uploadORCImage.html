@@ -1,22 +1,30 @@
 <template>
-    <lightning-card title="Google Cloud Vision API Integration" icon-name="custom:custom14">
-        <div class="slds-m-around_medium">
-            <!-- <div id="drop_zone" ondragover={allowDrop} ondrop={handleDrop} class="slds-m-bottom_medium">
-                Drop image here
-            </div> -->
-            <lightning-file-upload label="Upload Image"
-                                   name="fileUploader"
-                                   accept=".jpg,.jpeg,.png"
-                                   record-id={recordId}
-                                   onuploadfinished={handleUploadFinished}>
-            </lightning-file-upload>
-            <img src={imageUrl} alt="Uploaded Image" if:true={imageUrl}/>
-            <lightning-combobox label="Account" value={accountId} options={accountOptions} onchange={handleAccountChange}></lightning-combobox>
-            <lightning-button label="Analyze Image" onclick={analyzeImage} class="slds-m-top_medium"></lightning-button>
-            <lightning-textarea label="Extracted Text" value={extractedText} readonly rows="10"></lightning-textarea>
-            <lightning-button label="Save" onclick={saveDocument} class="slds-m-top_medium"></lightning-button>
-            <lightning-button label="Clear" onclick={clear} class="slds-m-top_medium"></lightning-button>
+    <lightning-card title="Google Cloud Vision API Integration" icon-name="custom:custom16">
+        <div class="slds-m-around_small">
+            <div>
+                <lightning-record-edit-form object-api-name="Scanned_Document__c" >
+                    <lightning-input-field 
+                        field-name="Account_link__c" onchange={handleAccountChange}
+                    ></lightning-input-field>
+                </lightning-record-edit-form>
+            </div>
+            <div class="slds-m-around_small">
+                <lightning-file-upload label="Upload Image"
+                                       name="fileUploader"
+                                       accept=".jpg,.jpeg,.png"
+                                       record-id={recordId}
+                                       onuploadfinished={handleUploadFinished}>
+                </lightning-file-upload>
+            </div>
+            <img src={imageUrl} alt="Uploaded Image" if:true={imageUrl} class="slds-m-around_small"/>
+            <div>
+                <lightning-button label="Analyze Image" onclick={analyzeImage} class="slds-m-around_small"></lightning-button>
+            </div>
+            <textarea class="slds-textarea" readonly>{extractedText}</textarea>
+            <div class="slds-m-bottom_small">
+                <lightning-button label="Save" onclick={saveDocument}  class="slds-m-around_small"></lightning-button>
+                <lightning-button label="Clear" onclick={clear}  class="slds-m-around_small"></lightning-button>
+            </div>
         </div>
     </lightning-card>
-    <lightning-toast if:true={isSaved} title="Success!" message="Extracted Text has been saved successfully." variant="success"></lightning-toast>
 </template>

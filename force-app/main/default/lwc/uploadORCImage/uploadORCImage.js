@@ -1,35 +1,25 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import analyzeImage from '@salesforce/apex/GoogleWebService.analyzeImage';
 import createDocument from '@salesforce/apex/GoogleWebService.createDocument';
-import getAccounts from '@salesforce/apex/GoogleWebService.getAccounts';
+import removeFileFromAccount from '@salesforce/apex/GoogleWebService.removeFileFromAccount';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { getRecord } from 'lightning/uiRecordApi';
+import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
+import ACCOUNT_FIELD from '@salesforce/schema/Scanned_document__c.Account__c';
 
-export default class MyComponent extends LightningElement {
+export default class uploadORCImage extends LightningElement {
     @api recordId;
     @track imageUrl;
     @track extractedText;
-    @track accountOptions = [];
     contentDocumentId;
     accountId;
 
-    @wire(getRecord, { recordId: '$recordId', fields: ['Account.Name'] })
-    wiredAccount({ error, data }) {
+    @wire(getRecord, { recordId: '$recordId', fields: [ACCOUNT_FIELD] })
+    wiredDocument({ error, data }) {
         if (data) {
-            this.accountId = this.recordId;
-        } else if (error) {
-            console.error(error);
-        }
-    }
-
-
-    @wire(getAccounts)
-    accounts({ error, data }) {
-        if (data) {
-            this.accountOptions = data.map(account => {
-                return { label: account.Name, value: account.Id };
-            });
-            this.accountOptions.unshift({ label: '--None--', value: '' });
+            this.accountId = getFieldValue(data, ACCOUNT_FIELD);
+            if (this.accountId) {
+                this.template.querySelector('lightning-input-field').value = this.accountId;
+            }
         } else if (error) {
             console.error(error);
         }
@@ -37,11 +27,6 @@ export default class MyComponent extends LightningElement {
 
     handleAccountChange(event) {
         this.accountId = event.detail.value;
-    }
-
-
-    allowDrop(dragEvent) {
-        dragEvent.preventDefault();
     }
 
     handleDrop(dropEvent) {
@@ -57,7 +42,6 @@ export default class MyComponent extends LightningElement {
     }
 
     handleUploadFinished(event) {
-        // Get the list of uploaded files
         const uploadedFiles = event.detail.files;
         this.contentDocumentId = uploadedFiles[0].documentId;
         this.imageUrl = '/sfc/servlet.shepherd/document/download/' + this.contentDocumentId;
@@ -66,25 +50,18 @@ export default class MyComponent extends LightningElement {
     analyzeImage() {
         analyzeImage({ contentDocumentId: this.contentDocumentId })
             .then(result => {
-                this.extractedText = result;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-
-    saveDocument() {
-        createDocument({ accountId: this.recordId, extractedText: this.extractedText, contentDocumentId: this.contentDocumentId })
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Success',
-                        message: 'Extracted Text has been saved successfully.',
-                        variant: 'success',
-                        mode: 'dismissable',
-                        duration: 3000
-                    })
-                );
+                if (result) {
+                    this.extractedText = result;
+                    this.adjustTextareaHeight();
+                } else {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'No Text Found',
+                            message: 'No text could be extracted from the image.',
+                            variant: 'info'
+                        })
+                    );
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -98,8 +75,78 @@ export default class MyComponent extends LightningElement {
             });
     }
 
+    saveDocument() {
+        if (this.accountId) {
+            createDocument({ accountId: this.recordId.toString(), extractedText: this.extractedText, contentDocumentId: this.contentDocumentId })
+            removeFileFromAccount({ accountId: this.accountId.toString(), contentDocumentId: this.contentDocumentId })
+                .then(() => {
+                    this.isLoading = false;
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: 'Extracted Text has been saved successfully.',
+                            variant: 'success',
+                            mode: 'dismissable',
+                            duration: 3000
+                        })
+                    );
+                })
+                .catch(error => {
+                    this.isLoading = false;
+                    console.error(error);
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Something went wrong: ' + error.body.message,
+                            variant: 'error'
+                        })
+                    );
+                });
+        } else {
+            this.isLoading = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'No Account selected.',
+                    variant: 'error'
+                })
+            );
+        }
+    }
+
     clear() {
         this.imageUrl = '';
         this.extractedText = '';
+    
+        removeFileFromAccount({ accountId: this.accountId.toString(), contentDocumentId: this.contentDocumentId })
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'File has been removed from the Account successfully.',
+                        variant: 'success',
+                        mode: 'dismissable',
+                        duration: 3000
+                    })
+                );
+            })
+            .catch(error => {
+                console.error(error);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Something went wrong while removing the file from the Account: ' + error.body.message,
+                        variant: 'error'
+                    })
+                );
+            });
+    }   
+
+    adjustTextareaHeight() {
+        const textarea = this.template.querySelector('textarea');
+        const text = this.extractedText || '';
+        const numberOfLines = Math.min(Math.floor(text.length / 50), 30);
+        textarea.style.height = `${numberOfLines * 1.2}em`;
     }
+    
 }
