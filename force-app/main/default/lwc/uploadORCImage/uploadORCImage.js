@@ -80,7 +80,6 @@ export default class uploadORCImage extends LightningElement {
             createDocument({ accountId: this.recordId.toString(), extractedText: this.extractedText, contentDocumentId: this.contentDocumentId })
             removeFileFromAccount({ accountId: this.accountId.toString(), contentDocumentId: this.contentDocumentId })
                 .then(() => {
-                    this.isLoading = false;
                     this.dispatchEvent(
                         new ShowToastEvent({
                             title: 'Success',
@@ -92,7 +91,6 @@ export default class uploadORCImage extends LightningElement {
                     );
                 })
                 .catch(error => {
-                    this.isLoading = false;
                     console.error(error);
                     this.dispatchEvent(
                         new ShowToastEvent({
@@ -103,7 +101,6 @@ export default class uploadORCImage extends LightningElement {
                     );
                 });
         } else {
-            this.isLoading = false;
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
