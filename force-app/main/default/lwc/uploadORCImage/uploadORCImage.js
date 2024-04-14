@@ -4,7 +4,7 @@ import createDocument from '@salesforce/apex/GoogleWebService.createDocument';
 import removeFileFromAccount from '@salesforce/apex/GoogleWebService.removeFileFromAccount';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
-import ACCOUNT_FIELD from '@salesforce/schema/Scanned_document__c.Account__c';
+import ACCOUNT_FIELD from '@salesforce/schema/Scanned_Document__c.Account__c';
 
 export default class uploadORCImage extends LightningElement {
     @api recordId;
@@ -74,10 +74,9 @@ export default class uploadORCImage extends LightningElement {
                 );
             });
     }
-
     saveDocument() {
         if (this.accountId) {
-            createDocument({ accountId: this.recordId.toString(), extractedText: this.extractedText, contentDocumentId: this.contentDocumentId })
+            createDocument({ accountId: this.accountId.toString(), extractedText: this.extractedText, contentDocumentId: this.contentDocumentId })
             removeFileFromAccount({ accountId: this.accountId.toString(), contentDocumentId: this.contentDocumentId })
                 .then(() => {
                     this.dispatchEvent(
@@ -89,6 +88,7 @@ export default class uploadORCImage extends LightningElement {
                             duration: 3000
                         })
                     );
+                    window.location.reload();
                 })
                 .catch(error => {
                     console.error(error);
@@ -110,7 +110,7 @@ export default class uploadORCImage extends LightningElement {
             );
         }
     }
-
+    
     clear() {
         this.imageUrl = '';
         this.extractedText = '';
@@ -138,12 +138,11 @@ export default class uploadORCImage extends LightningElement {
                 );
             });
     }   
-
+    
     adjustTextareaHeight() {
         const textarea = this.template.querySelector('textarea');
         const text = this.extractedText || '';
-        const numberOfLines = Math.min(Math.floor(text.length / 50), 30);
+        const numberOfLines = Math.min(Math.floor(text.length / 10), 30);
         textarea.style.height = `${numberOfLines * 1.2}em`;
     }
-    
 }

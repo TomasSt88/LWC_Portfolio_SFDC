@@ -31,7 +31,7 @@ public with sharing class GoogleWebService {
 
         return extractedText;
     }
-    
+  
     @AuraEnabled
     public static void createDocument(String accountId, String extractedText, String contentDocumentId) {
         Scanned_document__c doc = new Scanned_document__c();
@@ -52,11 +52,6 @@ public with sharing class GoogleWebService {
         insert cwd;
     }
 
-    @AuraEnabled(cacheable=true)
-    public static List<Account> getAccounts(String searchedAccount) {
-        return [SELECT Id, Name FROM Account where Id=:searchedAccount];
-    }
-
     @AuraEnabled
     public static void removeFileFromAccount(String accountId, String contentDocumentId) {
         List<ContentDocumentLink> links = [
@@ -70,3 +65,37 @@ public with sharing class GoogleWebService {
         }
     }
 }
+    // @AuraEnabled
+    // public static String analyzeImage(String contentDocumentId) {
+    //     ContentVersion version = [
+    //         SELECT VersionData
+    //         FROM ContentVersion
+    //         WHERE ContentDocumentId = :contentDocumentId AND IsLatest = true
+    //         LIMIT 1
+    //     ];
+
+    //     Blob imageBlob = version.VersionData;
+
+    //     HttpRequest req = new HttpRequest();
+    //     req.setEndpoint('callout:Google_New');
+    //     req.setMethod('POST');
+    //     req.setHeader('Content-Type', 'application/octet-stream');
+    //     req.setBodyAsBlob(imageBlob);
+
+    //     Http http = new Http();
+    //     HttpResponse res = http.send(req);
+
+    //     Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+    //     List<Object> responses = (List<Object>) responseMap.get('responses');
+    //     Map<String, Object> firstResponse = (Map<String, Object>) responses[0];
+    //     List<Object> textAnnotations = (List<Object>) firstResponse.get('textAnnotations');
+    //     Map<String, Object> firstTextAnnotation = (Map<String, Object>) textAnnotations[0];
+    //     String extractedText = (String) firstTextAnnotation.get('description');
+
+    //     return extractedText;
+    // }
+
+    // @AuraEnabled(cacheable=true)
+    // public static List<Account> getAccounts(String searchedAccount) {
+    //     return [SELECT Id, Name FROM Account where Id=:searchedAccount];
+    // }

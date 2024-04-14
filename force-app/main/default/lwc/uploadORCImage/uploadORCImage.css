@@ -1,37 +1,11 @@
-:host {
+.slds-textarea {
+    --slds-color-text: #5D6570;
+}
+
+/* :host {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-}
-
-.slds-m-around_small {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.slds-m-bottom_small{
-    display: flex;
-    justify-content: space-around;
-}
-
-.slds-textarea {
-    width: calc(100% - 20px);
-    margin: 20px;
-}
-
-img {
-    max-width: 1080px;
-    max-height: 800px;
-    margin-bottom: 20px;
-}
-
-@media only screen and (max-width: 600px) {
-    .slds-textarea {
-        width: calc(100% - 10px);
-        margin: 10px !important;
-    }
-}
+} */
