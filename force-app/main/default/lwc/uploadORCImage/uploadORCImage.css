@@ -1,6 +1,26 @@
-.slds-textarea {
+/* :host {
+    --slds-c-card-color-background: #fff;
+} */
+
+/*
+.card-title {
+    --slds-text-color-weak: #54698d;
+    --slds-font-size-2: 1.25rem;
+    --slds-line-height-2: 1.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} */
+
+/* :host {
+    --slds-c-card-footer-text-align: center;
+} */
+
+/* .slds-textarea {
     --slds-color-text: #5D6570;
-}
+} */
 
 /* :host {
     display: flex;
