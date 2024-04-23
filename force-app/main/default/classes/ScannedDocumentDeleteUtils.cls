@@ -8,13 +8,11 @@ public class ScannedDocumentDeleteUtils {
                 contentDocumentIds.add(link.ContentDocumentId);
             }
         }            
-        System.debug('handleBeforeDelete executed');
     }
 
     public static void handleAfterDelete() {
         if (!contentDocumentIds.isEmpty()) {
             delete [SELECT Id FROM ContentDocument WHERE Id IN :contentDocumentIds];
         }
-        System.debug('handleAfterDelete executed');
     }
 }
