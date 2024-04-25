@@ -1,33 +1,41 @@
 global class BatchDeleteContentDocuments implements Database.Batchable<sObject> {
+    global Integer recordsDeleted = 0;
+    
     global Database.QueryLocator start(Database.BatchableContext BC) {
-        String query = 'SELECT ContentDocumentId FROM ContentWorkspaceDoc WHERE ContentWorkspace.Name = \'ScannedImages\'';
+        // Get the IDs of the ContentDocuments in the 'ScannedImages' workspace
+        List<Id> contentDocumentIds = new List<Id>();
+        for (ContentWorkspaceDoc doc : [SELECT ContentDocumentId FROM ContentWorkspaceDoc WHERE ContentWorkspace.Name = 'ScannedImages']) {
+            contentDocumentIds.add(doc.ContentDocumentId);
+        }
+        System.debug('Content Document IDs: ' + contentDocumentIds.size());
+
+        // Get the IDs of the ContentDocuments linked to Scanned_document__c records
+        List<Id> linkedContentDocumentIds = new List<Id>();
+        for (ContentDocumentLink link : [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId IN (SELECT Id FROM Scanned_document__c)]) {
+            linkedContentDocumentIds.add(link.ContentDocumentId);
+        }
+        System.debug('Linked Content Document IDs: ' + linkedContentDocumentIds.size());
+
+        // Filter the ContentDocuments to get the ones that are not linked to Scanned_document__c records
+        String query = 'SELECT Id FROM ContentDocument WHERE Id IN :contentDocumentIds AND Id NOT IN :linkedContentDocumentIds';
         return Database.getQueryLocator(query);
     }
-
-    global void execute(Database.BatchableContext BC, List<ContentWorkspaceDoc> scope){
-        List<Id> contentDocumentIds = new List<Id>();
-        for (ContentWorkspaceDoc cwd : scope) {
-            contentDocumentIds.add(cwd.ContentDocumentId);
+    
+    global void execute(Database.BatchableContext BC, List<ContentDocument> scope){
+        recordsDeleted += scope.size();
+        try {
+            delete scope;
+        } catch (Exception e) {
+            System.debug('Error: ' + e.getMessage());
         }
-
-        List<ContentDocument> contentDocumentsToDelete = new List<ContentDocument>();
-        for (ContentDocument cd : [SELECT Id, (SELECT Id FROM ContentDocumentLinks) FROM ContentDocument WHERE Id IN :contentDocumentIds]) {
-            if (cd.ContentDocumentLinks.isEmpty()) {
-                contentDocumentsToDelete.add(cd);
-            }
-        }
-
-        delete contentDocumentsToDelete;
     }
-
+    
     global void finish(Database.BatchableContext BC){
-        List<ContentDocument> updatedRecords = [SELECT Id, Title FROM ContentDocument WHERE LastModifiedDate >= :System.now().addMinutes(-10)];
-        System.debug('Updated records: ' + updatedRecords);
-
+        System.debug('Deleted records: ' + recordsDeleted);
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         mail.setToAddresses(new String[] {'tomas.stranak1@gmail.com'});
         mail.setSubject('Batch Job Completed');
-        mail.setPlainTextBody('The BatchDeleteContentDocuments batch job has completed. ' + updatedRecords.size() + ' records were updated.');
+        mail.setPlainTextBody('The BatchDeleteContentDocuments batch job has completed. ' + recordsDeleted + ' records were deleted.');
         Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
     }
 }
