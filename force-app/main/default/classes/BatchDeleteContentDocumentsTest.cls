@@ -41,6 +41,7 @@ private class BatchDeleteContentDocumentsTest {
     @isTest 
     static void testBatchDeleteContentDocuments() {
         List<ContentDocument> initialContentDocuments = [SELECT Id FROM ContentDocument];
+        Assert.areNotEqual(0, initialContentDocuments.size(), 'There should be at least one ContentDocument record for the test.');
         System.assertNotEquals(0, initialContentDocuments.size(), 'There should be at least one ContentDocument record for the test.');
         System.debug('Initial Content Documents: ' + initialContentDocuments);
 
@@ -50,6 +51,8 @@ private class BatchDeleteContentDocumentsTest {
         Test.stopTest();
 
         List<ContentDocument> contentDocuments = [SELECT Id FROM ContentDocument];
+        Assert.areEqual(0, contentDocuments.size(), 'All ContentDocument records should have been deleted.');
+        System.debug('Content Documents after batch execution: ' + contentDocuments);
         System.assertEquals(0, contentDocuments.size(), 'All ContentDocument records should have been deleted.');
         System.debug('Content Documents after batch execution: ' + contentDocuments);
 
