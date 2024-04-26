@@ -4,7 +4,6 @@ import createDocument from '@salesforce/apex/GoogleWebService.createDocument';
 import removeFileFromAccount from '@salesforce/apex/GoogleWebService.removeFileFromAccount';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
-import ACCOUNT_FIELD from '@salesforce/schema/Scanned_Document__c.Account__c';
 
 export default class uploadORCImage extends LightningElement {
     @api recordId;
@@ -13,10 +12,11 @@ export default class uploadORCImage extends LightningElement {
     contentDocumentId;
     accountId;
 
-    @wire(getRecord, { recordId: '$recordId', fields: [ACCOUNT_FIELD] })
+    @wire(getRecord, { recordId: '$recordId', fields: ['Account.Id']})
     wiredDocument({ error, data }) {
         if (data) {
-            this.accountId = getFieldValue(data, ACCOUNT_FIELD);
+           this.accountId = getFieldValue(data, 'Account.Id');
+           // this.accountId = data.fields.Id.value; // alternative solution, in this case is getFieldValue not needed
             if (this.accountId) {
                 this.template.querySelector('lightning-input-field').value = this.accountId;
             }

@@ -1,0 +1,10 @@
+<template>
+    <lightning-card title="Account on Lead" icon-name="standard:account">
+        <div class="slds-m-around_medium">
+            <lightning-input type="text" label="Partner Account Lookup" value={lookupDefaultValue}></lightning-input>
+            <lightning-record-edit-form record-id={recordId} object-api-name="Lead">
+                <lightning-input-field field-name="Source_Account__c"></lightning-input-field>
+            </lightning-record-edit-form>
+        </div>
+    </lightning-card>
+</template>
