@@ -1,12 +1,18 @@
 public with sharing class GoogleWebService {
     @AuraEnabled
     public static String analyzeImage(String contentDocumentId) {
-        ContentVersion version = [
-            SELECT VersionData
-            FROM ContentVersion
-            WHERE ContentDocumentId = :contentDocumentId AND IsLatest = true
-            LIMIT 1
-        ];
+        ContentVersion version;
+        try {
+            version = [
+                SELECT VersionData
+                FROM ContentVersion
+                WHERE ContentDocumentId = :contentDocumentId AND IsLatest = true
+                LIMIT 1
+            ];
+        } catch (System.QueryException e) {
+                System.debug('QueryException: ' + e.getMessage());
+                // throw new CustomException('Please Add Any File through Upload Button');
+        }
 
         String base64String = EncodingUtil.base64Encode(version.VersionData);
         Blob imageBlob = EncodingUtil.base64Decode(base64String);
