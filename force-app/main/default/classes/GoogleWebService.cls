@@ -63,11 +63,22 @@ public with sharing class GoogleWebService {
         List<ContentDocumentLink> links = [
             SELECT Id
             FROM ContentDocumentLink
-            WHERE LinkedEntityId = :accountId AND ContentDocumentId = :contentDocumentId
+            WHERE LinkedEntityId = :accountId
+            AND ContentDocumentId = :contentDocumentId
         ];
-    
+
         if (!links.isEmpty()) {
             delete links;
+        }
+
+        List<ContentDocumentLink> remainingLinks = [
+            SELECT Id
+            FROM ContentDocumentLink
+            WHERE ContentDocumentId = :contentDocumentId
+        ];
+
+        if (remainingLinks.isEmpty()) {
+            System.debug('ContentDocument ' + contentDocumentId + ' has been deleted');
         }
     }
 }

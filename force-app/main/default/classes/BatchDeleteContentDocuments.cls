@@ -2,28 +2,35 @@ global class BatchDeleteContentDocuments implements Database.Batchable<sObject> 
     global Integer recordsDeleted = 0;
     
     global Database.QueryLocator start(Database.BatchableContext BC) {
-        // Get the IDs of the ContentDocuments in the 'ScannedImages' workspace
         List<Id> contentDocumentIds = new List<Id>();
-        for (ContentWorkspaceDoc doc : [SELECT ContentDocumentId FROM ContentWorkspaceDoc WHERE ContentWorkspace.Name = 'ScannedImages']) {
-            contentDocumentIds.add(doc.ContentDocumentId);
+        for (ContentDocument doc : [ SELECT Id 
+                                     FROM ContentDocument 
+                                     WHERE ContentAssetId = NULL 
+                                     AND Id NOT IN (
+                                         SELECT ContentDocumentId 
+                                         FROM ContentWorkspaceDoc) 
+                                    ]
+        ) {
+            contentDocumentIds.add(doc.Id);
         }
-        System.debug('Content Document IDs: ' + contentDocumentIds.size());
+        System.debug('Content Document IDs: ' + contentDocumentIds.size() + ' ist of ID ' + contentDocumentIds );
 
-        // Get the IDs of the ContentDocuments linked to Scanned_document__c records
         List<Id> linkedContentDocumentIds = new List<Id>();
-        for (ContentDocumentLink link : [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId IN (SELECT Id FROM Scanned_document__c)]) {
+        for (ContentDocumentLink link : [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId IN (SELECT Id FROM User)]) {
             linkedContentDocumentIds.add(link.ContentDocumentId);
         }
-        System.debug('Linked Content Document IDs: ' + linkedContentDocumentIds.size());
+        System.debug('Linked Content Document IDs: ' + linkedContentDocumentIds.size() + ' list of ID ' + linkedContentDocumentIds  );
 
-        // Filter the ContentDocuments to get the ones that are not linked to Scanned_document__c records
-        String query = 'SELECT Id FROM ContentDocument WHERE Id IN :contentDocumentIds AND Id NOT IN :linkedContentDocumentIds';
+        String query = 'SELECT Id FROM ContentDocument WHERE Id IN (\'' + String.join(contentDocumentIds, '\',\'') + '\') AND Id NOT IN (\'' + String.join(linkedContentDocumentIds, '\',\'') + '\')';
+        System.debug('query ' + query);
         return Database.getQueryLocator(query);
     }
     
     global void execute(Database.BatchableContext BC, List<ContentDocument> scope){
         recordsDeleted += scope.size();
+        System.debug('recordsDeleted ' + recordsDeleted);
         try {
+            System.debug('scope ' + scope);
             delete scope;
         } catch (Exception e) {
             System.debug('Error: ' + e.getMessage());

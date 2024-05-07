@@ -79,17 +79,18 @@ export default class uploadORCImage extends LightningElement {
         );
       });
   }
+
   saveDocument() {
     if (this.accountId) {
       if (this.extractedText && this.contentDocumentId) {
         createDocument({
           accountId: this.accountId.toString(),
-          extractedText: this.extractedText,
-          contentDocumentId: this.contentDocumentId
+          extractedText: this.extractedText.toString(),
+          contentDocumentId: this.contentDocumentId.toString()
         });
         removeFileFromAccount({
           accountId: this.accountId.toString(),
-          contentDocumentId: this.contentDocumentId
+          contentDocumentId: this.contentDocumentId.toString()
         })
           .then(() => {
             this.dispatchEvent(
