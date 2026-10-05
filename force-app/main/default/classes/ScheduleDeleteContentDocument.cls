@@ -1,6 +1,5 @@
-global class ScheduleDeleteContentDocument implements Schedulable {
-    global void execute(SchedulableContext SC) {
-        BatchDeleteContentDocuments b = new BatchDeleteContentDocuments();
-        Database.executeBatch(b);
-    }
+public with sharing class ScheduleDeleteContentDocument implements Schedulable {
+  public void execute(SchedulableContext sc) {
+    Database.executeBatch(new BatchDeleteContentDocuments());
+  }
 }
