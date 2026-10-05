@@ -1,14 +1,14 @@
-import { LightningElement, track, api, wire } from "lwc";
+import { LightningElement, api, wire } from "lwc";
 import analyzeImage from "@salesforce/apex/GoogleWebService.analyzeImage";
-import createDocument from "@salesforce/apex/GoogleWebService.createDocument";
+import saveScannedDocument from "@salesforce/apex/GoogleWebService.saveScannedDocument";
 import removeFileFromAccount from "@salesforce/apex/GoogleWebService.removeFileFromAccount";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { getRecord, getFieldValue } from "lightning/uiRecordApi";
 
-export default class uploadORCImage extends LightningElement {
+export default class UploadORCImage extends LightningElement {
   @api recordId;
-  @track imageUrl;
-  @track extractedText;
+  imageUrl;
+  extractedText;
   contentDocumentId;
   accountId;
 
@@ -16,13 +16,8 @@ export default class uploadORCImage extends LightningElement {
   wiredDocument({ error, data }) {
     if (data) {
       this.accountId = getFieldValue(data, "Account.Id");
-      // this.accountId = data.fields.Id.value; // alternative solution, in this case is getFieldValue not needed
-      if (this.accountId) {
-        this.template.querySelector("lightning-input-field").value =
-          this.accountId;
-      }
     } else if (error) {
-      console.error(error);
+      this.showToast("Error", this.errorMessage(error), "error");
     }
   }
 
@@ -30,148 +25,127 @@ export default class uploadORCImage extends LightningElement {
     this.accountId = event.detail.value;
   }
 
-  handleDrop(dropEvent) {
-    dropEvent.preventDefault();
-    let files = dropEvent.dataTransfer.files;
-    if (files.length > 0) {
-      let reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        this.imageUrl = loadEvent.target.result;
-      };
-      reader.readAsDataURL(files[0]);
-    }
-  }
-
   handleUploadFinished(event) {
     const uploadedFiles = event.detail.files;
+    if (!uploadedFiles || uploadedFiles.length === 0) {
+      return;
+    }
     this.contentDocumentId = uploadedFiles[0].documentId;
     this.imageUrl =
       "/sfc/servlet.shepherd/document/download/" + this.contentDocumentId;
   }
 
-  analyzeImage() {
-    this.results = [];
-    analyzeImage({ contentDocumentId: this.contentDocumentId })
-      .then((result) => {
-        if (result) {
-          this.extractedText = result;
-          this.adjustTextareaHeight();
-        } else {
-          this.dispatchEvent(
-            new ShowToastEvent({
-              title: "No Text Found",
-              message: "No text could be extracted from the image.",
-              variant: "info"
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: "Error",
-            message:
-              "Something went wrong: Please Add Any File through Upload Button",
-            // message: 'Something went wrong: ' + error.body.message,
-            variant: "error"
-          })
-        );
+  async analyzeImage() {
+    if (!this.contentDocumentId) {
+      this.showToast("No file", "Please upload an image first.", "error");
+      return;
+    }
+    try {
+      const result = await analyzeImage({
+        contentDocumentId: this.contentDocumentId
       });
-  }
-
-  saveDocument() {
-    if (this.accountId) {
-      if (this.extractedText && this.contentDocumentId) {
-        createDocument({
-          accountId: this.accountId.toString(),
-          extractedText: this.extractedText.toString(),
-          contentDocumentId: this.contentDocumentId.toString()
-        });
-        removeFileFromAccount({
-          accountId: this.accountId.toString(),
-          contentDocumentId: this.contentDocumentId.toString()
-        })
-          .then(() => {
-            this.dispatchEvent(
-              new ShowToastEvent({
-                title: "Success",
-                message: "Extracted Text has been saved successfully.",
-                variant: "success",
-                mode: "dismissable",
-                duration: 3000
-              })
-            );
-            window.location.reload();
-          })
-          .catch((error) => {
-            console.error(error);
-            this.dispatchEvent(
-              new ShowToastEvent({
-                title: "Error",
-                message: "Something went wrong: " + error.body.message,
-                variant: "error"
-              })
-            );
-          });
+      if (result) {
+        this.extractedText = result;
+        this.adjustTextareaHeight();
       } else {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: "Error",
-            message: "Extracted Text and attached Content Document fields can not be empty.",
-            variant: "error"
-          })
+        this.showToast(
+          "No Text Found",
+          "No text could be extracted from the image.",
+          "info"
         );
       }
-    } else {
-      this.dispatchEvent(
-        new ShowToastEvent({
-          title: "Error",
-          message: "No Account selected.",
-          variant: "error"
-        })
-      );
+    } catch (error) {
+      this.showToast("Error", this.errorMessage(error), "error");
     }
   }
 
-  clear() {
+  async saveDocument() {
+    if (!this.accountId) {
+      this.showToast("Error", "No Account selected.", "error");
+      return;
+    }
+    if (!this.extractedText || !this.contentDocumentId) {
+      this.showToast(
+        "Error",
+        "Extracted Text and attached Content Document fields can not be empty.",
+        "error"
+      );
+      return;
+    }
+    try {
+      // One server call creates the record, links and moves the file, and
+      // removes the temporary Account link in a single transaction.
+      await saveScannedDocument({
+        accountId: this.accountId,
+        extractedText: this.extractedText,
+        contentDocumentId: this.contentDocumentId
+      });
+      this.showToast(
+        "Success",
+        "Extracted Text has been saved successfully.",
+        "success"
+      );
+      this.resetState();
+    } catch (error) {
+      this.showToast("Error", this.errorMessage(error), "error");
+    }
+  }
+
+  async clear() {
+    const { accountId, contentDocumentId } = this;
+    this.resetState();
+    if (!accountId || !contentDocumentId) {
+      return;
+    }
+    try {
+      await removeFileFromAccount({ accountId, contentDocumentId });
+      this.showToast(
+        "Success",
+        "File has been removed from the Account successfully.",
+        "success"
+      );
+    } catch (error) {
+      this.showToast("Error", this.errorMessage(error), "error");
+    }
+  }
+
+  resetState() {
     this.imageUrl = "";
     this.extractedText = "";
+    this.contentDocumentId = undefined;
     this.adjustTextareaHeight();
-
-    removeFileFromAccount({
-      accountId: this.accountId.toString(),
-      contentDocumentId: this.contentDocumentId
-    })
-      .then(() => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: "Success",
-            message: "File has been removed from the Account successfully.",
-            variant: "success",
-            mode: "dismissable",
-            duration: 3000
-          })
-        );
-      })
-      .catch((error) => {
-        console.error(error);
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: "Error",
-            message:
-              "Something went wrong while removing the file from the Account: " +
-              error.body.message,
-            variant: "error"
-          })
-        );
-      });
   }
 
   adjustTextareaHeight() {
     const textarea = this.template.querySelector("textarea");
+    if (!textarea) {
+      return;
+    }
     const text = this.extractedText || "";
     const numberOfLines = Math.min(Math.floor(text.length / 10), 30);
     textarea.style.height = `${numberOfLines * 1.2}em`;
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title,
+        message,
+        variant,
+        mode: variant === "error" ? "sticky" : "dismissable"
+      })
+    );
+  }
+
+  errorMessage(error) {
+    if (error && error.body) {
+      if (Array.isArray(error.body)) {
+        return error.body.map((e) => e.message).join(", ");
+      }
+      if (error.body.message) {
+        return error.body.message;
+      }
+    }
+    return (error && error.message) || "Unknown error";
   }
 }
